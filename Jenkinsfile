@@ -6,5 +6,10 @@ pipeline {
                 sh 'tidy -q -e *.html'
             }
         }
+        stage('Build Dockerfile') {
+            steps {
+                sh
+            }
+        }
     }
 }
