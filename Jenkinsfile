@@ -1,5 +1,4 @@
 pipeline {
-    def app
     agent any
     stages {
         stage('Lint HTML') {
@@ -8,6 +7,7 @@ pipeline {
             }
         }
         stage('Build Dockerfile') {
+            def app
             steps {
                 app = docker.build('nginxy')
             }
