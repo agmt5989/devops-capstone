@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    def dockerImage
     stages {
         stage('Lint HTML') {
             steps {
@@ -9,16 +10,13 @@ pipeline {
         stage('Build Dockerfile') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
-                    sh 'docker build -t nginxy .'
+                    dockerImage = docker.build('imyke/nginxy:latest')
                 }
             }
         }
         stage('Push Docker image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
-                    sh 'docker login -u $USERNAME --password-stdin $PASSWORD'
-					sh 'docker push nginxy'
-                }
+                dockerImage.push()
             }
         }
     }
