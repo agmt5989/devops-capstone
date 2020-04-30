@@ -6,12 +6,12 @@ pipeline {
                 sh 'tidy -q -e *.html'
             }
         }
-    }
-    stage('Build Dockerfile') {
-        steps {
-            withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
-                sh 'docker build -t nginxy .'
+        stage('Build Dockerfile') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+                    sh 'docker build -t nginxy .'
+                }
             }
-		}
+        }
     }
 }
