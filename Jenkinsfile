@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Push Docker image') {
             steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'docker')
+                docker.withRegistry('https://registry-1.docker.io/v2/', 'docker')
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
                     sh 'docker login -u $USERNAME --password $PASSWORD'
 					sh 'docker push nginxy'
