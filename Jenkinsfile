@@ -1,25 +1,27 @@
 pipeline {
     agent any
-    def dockerImage
     stages {
         stage('Lint HTML') {
             steps {
                 sh 'tidy -q -e *.html'
             }
         }
-        stage('Build Dockerfile') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
-                    dockerImage = docker.build('imyke/nginxy:latest')
-                }
-            }
-        }
-        stage('Push Docker image') {
-            steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'docker') {
-                    dockerImage.push()
-                }
-            }
-        }
+        stage('Blue cluster') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh '''
+						eksctl create cluster \
+						--name blue \
+						--nodegroup-name workers \
+						--node-type t2.micro \
+						--nodes 2 \
+						--nodes-min 2 \
+						--nodes-max 5 \
+						--region us-west-2 \
+						--node-ami auto
+					'''
+				}
+			}
+		}
     }
 }
