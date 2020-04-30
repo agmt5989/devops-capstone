@@ -1,19 +1,26 @@
 version: 2.1
 
 jobs:
-  build-and-lint:
+  build:
     docker:
-      -image: circleci/python
+      - image: circleci/python
     steps:
       - checkout
       - run:
           command: |
             make setup
-            make lint
             make build
             make run
+  test:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - run make lint
 
 workflows:
-  main:
+  version: 2.1
+  build_and_test:
     jobs:
-      - build-and-lint
+      - build
+      - test
