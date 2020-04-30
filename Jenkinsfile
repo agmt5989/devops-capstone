@@ -7,4 +7,11 @@ pipeline {
             }
         }
     }
+    stage('Build Dockerfile') {
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+                sh 'docker build -t nginxy .'
+            }
+		}
+    }
 }
