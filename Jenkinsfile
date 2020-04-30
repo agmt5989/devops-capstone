@@ -6,22 +6,21 @@ pipeline {
                 sh 'tidy -q -e *.html'
             }
         }
-        stage('Blue cluster') {
-			steps {
-				withAWS(region:'us-west-2', credentials:'awscred') {
-					sh '''
-						eksctl create cluster \
-						--name blue \
-						--nodegroup-name workers \
-						--node-type t2.micro \
-						--nodes 2 \
-						--nodes-min 2 \
-						--nodes-max 5 \
-						--region us-west-2 \
-						--node-ami auto
-					'''
-				}
-			}
-		}
+        stage('Build Dockerfile') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+                    sh 'docker build -t nginxy .'
+                }
+            }
+        }
+        stage('Push Docker image') {
+            steps {
+                docker.withRegistry('https://registry.hub.docker.com', 'docker')
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
+                    sh 'docker login -u $USERNAME --password $PASSWORD'
+					sh 'docker push nginxy'
+                }
+            }
+        }
     }
 }
