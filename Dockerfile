@@ -1,14 +1,18 @@
 FROM nginx:alpine
+LABEL maintainer="agmt5989@yahoo.com"
 
 ## Step 1:
-# Create a working directory
-#WORKDIR /app
+# Remove default config file for nginx
+RUN rm /etc/nginx/conf.d/default.conf
 
-
+## Step 2:
+# Copy index.html file into web root
 COPY . index.html /usr/share/nginx/html/
 
-# Run a command
-CMD ["nginx"]
+## Step 3:
+# Copy new config file into /etc
+COPY . nginx.conf /etc/nginx/
 
-# Expose
+## Step 4:
+# Expose port 80
 EXPOSE 80
