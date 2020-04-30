@@ -16,7 +16,7 @@ pipeline {
         stage('Push Docker image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]){
-                    sh 'docker login -u $USERNAME -p $PASSWORD'
+                    sh 'docker login -u $USERNAME --password-stdin $PASSWORD'
 					sh 'docker push nginxy'
                 }
             }
