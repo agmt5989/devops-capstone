@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: green
+  labels:
+    app: nginxygreen
+spec:
+  replicas: 1
+  selector:
+     app: green
+  template:
+    metadata:
+      labels:
+        app: green
+    spec:
+      containers:
+      - name: green
+        image: imyke/nginxy
