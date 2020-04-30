@@ -41,5 +41,47 @@ pipeline {
 				}
 			}
 		}
+        stage('Blue configuration') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'aws eks --region us-west-2 update-kubeconfig --name nginxyblue'
+				}
+			}
+		}
+		stage('Green configuration') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'aws eks --region us-west-2 update-kubeconfig --name nginxygreen'
+				}
+			}
+		}
+		stage('Blue deployment') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'kubectl apply -f ./blue.yml'
+				}
+			}
+		}
+		stage('Green deployment') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'kubectl apply -f ./green.yml'
+				}
+			}
+		}
+		stage('Blue service') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'kubectl apply -f ./service-blue.yml'
+				}
+			}
+		}
+ 		stage('Green service') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'awscred') {
+					sh 'kubectl apply -f ./service-green.yml'
+				}
+			}
+		}
     }
 }
